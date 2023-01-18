@@ -12,7 +12,7 @@
 		<nav>
 			<ul>
 				<li><a href="#"><i class="bi bi-house-fill"></i> YONG SOUNG </a></li>
-				<li><a href="https://github.com/oti-project3/main"><i class="bi bi-github "></i> Git Hub </a></li>
+				<li><a href="https://github.com/oti-project3/LMS_project"><i class="bi bi-github "></i> Git Hub </a></li>
 				<li> &nbsp;&nbsp;&nbsp;<%=sf.format(nowTime)%></li>
 			</ul>
 		</nav>
