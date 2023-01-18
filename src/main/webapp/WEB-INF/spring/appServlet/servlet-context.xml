@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+	<task:annotation-driven/>
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<beans:property name="messageConverters">
+			<beans:list>
+				<beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+					<beans:property name="supportedMediaTypes">
+						<beans:list>
+							<beans:value>text/html;charset=UTF-8</beans:value>
+							<beans:value>application/json;charset=UTF-8</beans:value>
+						</beans:list>
+					</beans:property>
+				</beans:bean>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- 메인보드 -->
+ 	<resources location="/resources/" mapping="/**"/>
+<!-- 	<resources location="/resources/js/" mapping="/js/**/"/> -->
+<!-- 	<resources location="/resources/js/core/" mapping="/js/core/**/"/> -->
+<!-- 	<resources location="/resources/js/plugins/" mapping="/js/plugins/**/"/> -->
+<!-- 	<resources location="/resources/css/" mapping="/css/**/"/> -->
+<!-- 	<resources location="/resources/img/" mapping="/img/**/"/> -->
+<!-- 	<resources location="/resources/scss/" mapping="/scss/**/"/> -->
+<!-- 	<resources location="/resources/video/" mapping="/video/**"/> -->
+<!-- 	<resources location="/resources/scss/now-ui-dashboard/" mapping="/scss/now-ui-dashboard/**/"/> -->
+<!-- 	<resources location="/resources/scss/now-ui-dashboard/cards/" mapping="/scss/now-ui-dashboard/cards/**/"/> -->
+<!-- 	<resources location="/resources/scss/now-ui-dashboard/mixins/" mapping="/scss/now-ui-dashboard/mixins/**/"/> -->
+<!-- 	<resources location="/resources/scss/now-ui-dashboard/plugins/" mapping="/scss/now-ui-dashboard/plugins/**/"/> -->
+<!-- 	<resources location="/resources/demo/" mapping="/demo/**"/>  -->
+<!-- 	<resources location="/resources/fonts/" mapping="/fonts/**"/>  -->
+	
+	<!-- 로그인 -->
+ 	<resources location="/resources/login/" mapping="/login/**"/>
+<!--  	<resources location="/resources/login/css/" mapping="/login/css/**/"/> -->
+<!--  	<resources location="/resources/login/css/bootstrap/" mapping="/login/css/bootstrap/**/"/> -->
+<!--  	<resources location="/resources/login/css/bootstrap/utilities/" mapping="/login/css/bootstrap/utilities/**/"/> -->
+<!--  	<resources location="/resources/login/fonts/" mapping="/login/fonts/**"/> -->
+<!--  	<resources location="/resources/login/images/" mapping="/login/images/**"/> -->
+<!--  	<resources location="/resources/login/js/" mapping="/login/js/**/"/> -->
+<!--  	<resources location="/resources/login/scss/" mapping="/login/scss/**/"/> -->
+	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize">
+			<beans:value>50000000</beans:value>
+		</beans:property>
+	</beans:bean>
+	
+	<view-controller path="/" view-name="home"/>
+	
+	<interceptors>
+        <interceptor>
+            <mapping path="/attend/**"/>
+            <mapping path="/reports/**"/>
+            <mapping path="/board/**"/>
+            <mapping path="/class/**"/>
+            <beans:bean class="com.coderby.myapp.common.filter.LoginInterceptor" />
+        </interceptor>
+    </interceptors>
+	
+	<context:component-scan base-package="com.coderby.myapp.attendance.controller"/>
+	<context:component-scan base-package="com.coderby.myapp.board.controller"/>
+	<context:component-scan base-package="com.coderby.myapp.classes.controller"/>
+	
+</beans:beans>

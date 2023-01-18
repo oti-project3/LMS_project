@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coderby.myapp.board.dao.IBoardRepository">
+	<select id="selectBoardListByClass" parameterType="map" resultType="com.coderby.myapp.board.model.BoardVO">
+		SELECT
+			BOARD_ID			AS "boardId",
+			BOARD_CATEGORY		AS "boardCategory",
+			BOARD_TITLE			AS "boardTitle",
+			CREATED_DATE		AS "createdDate",
+			STUDENT_ID			AS "studentId"
+		FROM board
+		<where>
+			class_id=#{classId}
+			<if test="selectedCategory != '전체'">
+				and board_category = #{selectedCategory} 
+			</if>
+			<if test="searchTitle != null">
+				and board_title like #{searchTitle}
+			</if>
+			<if test="searchStudentId != null">
+				and student_id like #{searchStudentId}
+			</if>
+		</where>
+		ORDER BY CREATED_DATE desc
+		OFFSET (#{pageNo}-1)*#{rowsPerPage} ROWS
+		FETCH FIRST #{rowsPerPage} ROWS ONLY
+		
+	</select>
+
+	<select id="selectTotalBoardCountByClass" parameterType="map" resultType="int">
+		SELECT COUNT(BOARD_ID) AS "count"
+		FROM BOARD
+		<where>
+			class_id=#{classId}
+			<if test="selectedCategory != '전체'">
+				and board_category = #{selectedCategory} 
+			</if>
+			<if test="searchTitle != null">
+				and board_title like #{searchTitle}
+			</if>
+			<if test="searchStudentId != null">
+				and student_id like #{searchStudentId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectBoard" parameterType="int" resultType="com.coderby.myapp.board.model.BoardVO">
+		<![CDATA[
+			SELECT
+				BOARD_ID			AS "boardId",
+				BOARD_CATEGORY		AS "boardCategory",
+				BOARD_TITLE			AS "boardTitle",
+				BOARD_CONTENT		AS "boardContent",
+				CREATED_DATE		AS "createdDate",
+				STUDENT_ID			AS "studentId",
+				CLASS_ID			AS "classId"
+			FROM board
+			WHERE board_id=#{boardId}
+		]]>
+	</select>
+	
+	<insert id="insertBoard" parameterType="com.coderby.myapp.board.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId" keyColumn="board_id">
+		<![CDATA[
+			INSERT INTO
+				BOARD
+					(BOARD_ID, BOARD_CATEGORY, BOARD_TITLE, BOARD_CONTENT, CREATED_DATE, STUDENT_ID, CLASS_ID)
+			VALUES
+				(SEQ_ENTITY_ID.NEXTVAL, #{boardCategory}, #{boardTitle}, #{boardContent}, sysdate, #{studentId}, #{classId})
+		]]>
+	</insert>
+	
+	<update id="updateBoard" parameterType="com.coderby.myapp.board.model.BoardVO">
+		<![CDATA[
+			UPDATE 
+				BOARD
+			SET
+				BOARD_CATEGORY=#{boardCategory}, BOARD_TITLE=#{boardTitle}, BOARD_CONTENT=#{boardContent},
+				CREATED_DATE=sysdate
+			WHERE
+				BOARD_ID=#{boardId}
+		]]>
+	</update>
+	
+	<delete id="deleteBoard" parameterType="int">
+		DELETE 
+			FROM BOARD
+			WHERE BOARD_ID=#{boardId}
+	</delete>
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coderby.myapp.classes.dao.IClassRepository">
+	<!-- 클래스 리스트 조회 -->
+	<select id="getClassList" parameterType="map" resultType="com.coderby.myapp.classes.model.ClassVO">
+		select 
+			class_id 		 as 		"classId",
+			org_name 		 as 		"orgName",
+			class_name 		 as 		"className",
+			created_date     as 		"createdDate",
+			class_hours      as 		"classHours",
+			class_start_date as 		"classStartDate",
+			class_end_date 	 as 		"classEndDate"
+		from class
+		<where>
+			<if test="orgName != '전체'">
+				org_name = #{orgName}
+			</if>
+			<if test="className != null">
+				and class_name like #{className}
+			</if>
+		</where>
+		order by class_start_date desc
+		OFFSET (#{pager.pageNo} - 1) * #{pager.rowsPerPage} ROWS
+		FETCH NEXT #{pager.rowsPerPage} ROWS ONLY
+	</select>
+	
+	<!-- 클래스 리스트 totalRows -->
+	<select id="getClassListTotal" parameterType="map" resultType="int">
+		select count(*)
+		from class
+		<where>
+			<if test="orgName != '전체'">
+				org_name = #{orgName}
+			</if>
+			<if test="className != null">
+				and class_name like #{className}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 클래스의 섹션 리스트 조회 -->
+	<select id="getSectionList" parameterType="int" resultType="com.coderby.myapp.classes.model.SectionVO">
+		select 
+			section_id 			as 	sectionId,
+			section_title 		as 	sectionTitle,
+			section_description as sectionDescription,
+			class_id 			as 	classId,
+			created_date    	as  createdDate
+		from section 
+		where class_id = #{classId}
+		order by section_order
+	</select>
+	
+	<!-- 섹션 한 행 조회-->
+	<select id="getSection" parameterType="int" resultType="com.coderby.myapp.classes.model.SectionVO">
+		select 
+			section_id 			as 	sectionId,
+			section_title 		as 	sectionTitle,
+			section_description as sectionDescription,
+			class_id 			as 	classId,
+			created_date    	as  createdDate,
+			section_order       as  sectionOrder
+		from section 
+		where section_id = #{sectionId}
+		order by section_order
+	</select>
+	
+	<!-- 섹션 추가-->
+	<insert id="insertSection" parameterType="map">
+		insert into section
+			(section_id, section_title, section_description, class_id, created_date, section_order)
+		values 
+			(seq_entity_id.nextval, #{sectionTitle}, #{sectionDescription}, #{classId}, systimestamp, #{thisOrder})
+	</insert>
+	
+	<!-- 섹션 타이틀 수정 -->
+	<update id="updateSectionTitle" parameterType="map">
+		update section 
+		set 
+			section_title = #{sectionTitle}
+		where section_id = #{sectionId}
+	</update>
+	
+	<!-- 섹션 타이틀 수정 -->
+	<update id="updateSectionDescription" parameterType="map">
+		update section 
+		set 
+			section_Description = #{sectionDescription}
+		where section_id = #{sectionId}
+	</update>
+	
+	<!-- 섹션 삭제 -->
+	<delete id="deleteSection" parameterType="int">
+		delete from section
+		where section_id = #{sectionId}
+	</delete>
+	
+	<!-- 전체 반 ID 리스트 조회 -->
+	<select id="getClassIdList" resultType="int">
+		select class_id
+		from class
+	</select>	
+	
+	<update id="updateSectionOrder" parameterType="int">
+		update section
+		set section_order = section_order + 1
+		where section_order >= #{order}
+	</update>
+</mapper>
