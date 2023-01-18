@@ -3,7 +3,7 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
 <%
-	Date nowTime = new Date();
+	Date nowTime =new Date();
 	SimpleDateFormat sf = new SimpleDateFormat("yyyy년 MM월 dd일 ");
 %>
 <!-- FOOTER -->
